@@ -1,103 +1,34 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { motion } from "motion/react";
-import { Store, Briefcase, Calendar, ArrowRight, ChevronRight, Star, MapPin } from "lucide-react";
-import { KenteStrip } from "@/components/KenteStrip";
-
-// ─── Types ───
-type StreamItem =
-  | { kind: "business"; id: string; title: string; detail: string; meta: string; href: string; rating: number; featured: boolean; recency: string }
-  | { kind: "role"; id: string; title: string; detail: string; meta: string; href: string; salary: string; featured: boolean; recency: string }
-  | { kind: "event"; id: string; title: string; detail: string; meta: string; href: string; category: string; recency: string };
-
-// Fake recency labels for the demo
-const businessRecency = ["just now", "2h ago", "4h ago", "yesterday"];
-const jobRecency = ["1h ago", "3h ago", "6h ago"];
-const eventRecency = ["today", "2d ago", "3d ago"];
+import { Star, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
   const businesses = useQuery(api.businesses.featured);
+  const allBusinesses = useQuery(api.businesses.list);
   const jobs = useQuery(api.jobs.featured);
+  const allJobs = useQuery(api.jobs.list);
   const events = useQuery(api.events.list);
 
-  // Build unified stream, interleaved by "recency"
-  const stream = useMemo<StreamItem[]>(() => {
-    const items: StreamItem[] = [];
-
-    businesses?.forEach((b, i) => {
-      items.push({
-        kind: "business",
-        id: b._id,
-        title: b.name,
-        detail: `${b.category} · ${b.location}`,
-        meta: b.location,
-        href: `/directory/${b._id}`,
-        rating: b.rating,
-        featured: b.featured,
-        recency: businessRecency[i % businessRecency.length],
-      });
-    });
-
-    jobs?.forEach((j, i) => {
-      items.push({
-        kind: "role",
-        id: j._id,
-        title: j.title,
-        detail: j.company,
-        meta: j.salary,
-        href: `/jobs/${j._id}`,
-        salary: j.salary,
-        featured: j.featured,
-        recency: jobRecency[i % jobRecency.length],
-      });
-    });
-
-    events?.slice(0, 3).forEach((e, i) => {
-      items.push({
-        kind: "event",
-        id: e._id,
-        title: e.title,
-        detail: `${new Date(e.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} · ${e.location}`,
-        meta: e.location,
-        href: "/community",
-        category: e.category,
-        recency: eventRecency[i % eventRecency.length],
-      });
-    });
-
-    // Interleave: business, role, event, business, role, event...
-    const byKind = {
-      business: items.filter((i) => i.kind === "business"),
-      role: items.filter((i) => i.kind === "role"),
-      event: items.filter((i) => i.kind === "event"),
-    };
-    const interleaved: StreamItem[] = [];
-    const maxLen = Math.max(byKind.business.length, byKind.role.length, byKind.event.length);
-    for (let i = 0; i < maxLen; i++) {
-      if (byKind.business[i]) interleaved.push(byKind.business[i]);
-      if (byKind.role[i]) interleaved.push(byKind.role[i]);
-      if (byKind.event[i]) interleaved.push(byKind.event[i]);
-    }
-    return interleaved;
-  }, [businesses, jobs, events]);
-
-  // Ticker items — recent activity
+  // Ticker items
   const tickerItems = useMemo(() => {
     const items: string[] = [];
-    businesses?.slice(0, 2).forEach((b) => items.push(`${b.name} joined the directory`));
-    jobs?.slice(0, 2).forEach((j) => items.push(`${j.title} role posted by ${j.company}`));
-    events?.slice(0, 1).forEach((e) => items.push(`${e.title} — ${new Date(e.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}`));
+    allBusinesses?.slice(0, 3).forEach((b) => items.push(`${b.name} joined`));
+    allJobs?.slice(0, 3).forEach((j) => items.push(`${j.title} posted`));
+    events?.slice(0, 2).forEach((e) => items.push(`${e.title} announced`));
     return items;
-  }, [businesses, jobs, events]);
+  }, [allBusinesses, allJobs, events]);
+
+  const nextEvent = events?.[0];
 
   return (
-    <div className="min-h-dvh">
+    <div className="min-h-dvh bg-onyx pb-20">
       {/* Header */}
-      <header className="px-6 pt-[env(safe-area-inset-top,20px)] pb-4">
+      <header className="px-6 pt-[env(safe-area-inset-top,20px)] pb-3">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -110,137 +41,151 @@ export default function HomePage() {
         </motion.div>
       </header>
 
-      {/* ── 1. Live Activity Ticker ── */}
-      {tickerItems.length > 0 && (
-        <div className="overflow-hidden mb-6 border-y border-white/[0.03] py-2.5">
+      {/* ── Hero Event Card with vertical Kente strip ── */}
+      {nextEvent && (
+        <div className="mx-6 mt-2 mb-5">
           <motion.div
-            className="flex gap-8 whitespace-nowrap"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            {/* Duplicate for seamless loop */}
-            {[...tickerItems, ...tickerItems].map((item, i) => (
-              <span key={i} className="text-[12px] text-white/15 flex items-center gap-2">
-                <span className="inline-block w-1 h-1 rounded-full bg-forest/60" />
-                {item}
-              </span>
-            ))}
+            <Link href="/community" className="group block">
+              <div className="relative bg-surface rounded-2xl overflow-hidden border border-white/[0.04]">
+                {/* Vertical Kente strip on left edge */}
+                <div className="absolute left-0 top-0 bottom-0 w-[4px]" style={{
+                  background: "repeating-linear-gradient(180deg, #CE1126 0px, #CE1126 8px, #FCD116 8px, #FCD116 16px, #006B3F 16px, #006B3F 24px, #FCD116 24px, #FCD116 32px)"
+                }} />
+
+                <div className="pl-6 pr-5 py-6">
+                  <p className="text-[10px] uppercase tracking-[2px] text-kente-gold/40 font-medium mb-3">
+                    Next event
+                  </p>
+                  <h2 className="font-display text-[1.4rem] font-bold text-white leading-tight tracking-tight group-hover:text-kente-gold transition-colors duration-200">
+                    {nextEvent.title}
+                  </h2>
+                  <p className="text-[13px] text-white/30 mt-2">
+                    {new Date(nextEvent.date).toLocaleDateString("en-GB", { day: "numeric", month: "long" })} · {nextEvent.location}
+                  </p>
+                </div>
+              </div>
+            </Link>
           </motion.div>
         </div>
       )}
 
-      <div className="px-6">
-        {/* Quick navigation */}
-        <motion.div
-          className="flex gap-6 mb-6"
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
-          {[
-            { label: "Directory", icon: Store, href: "/directory" },
-            { label: "Jobs", icon: Briefcase, href: "/jobs" },
-            { label: "Events", icon: Calendar, href: "/community" },
-          ].map(({ label, icon: Icon, href }) => (
-            <Link
-              key={href}
-              href={href}
-              className="group flex items-center gap-2 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200"
+      {/* ── Heartbeat Pills ── */}
+      <motion.div
+        className="flex gap-3 px-6 mb-5 overflow-x-auto scrollbar-hide"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        {[
+          { text: "4 new businesses this week", dot: "bg-forest" },
+          { text: "3 roles posted today", dot: "bg-kente-gold" },
+          { text: "1 event tomorrow", dot: "bg-ashanti-red" },
+        ].map((pill, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-2 bg-white/[0.02] border border-white/[0.04] rounded-full px-3.5 py-2 whitespace-nowrap shrink-0"
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${pill.dot} animate-pulse`} />
+            <span className="text-[11px] text-white/30">{pill.text}</span>
+          </div>
+        ))}
+      </motion.div>
+
+      {/* ── Kente Strip ── */}
+      <div className="mx-6 kente-strip h-[2px] rounded-full" />
+
+      {/* ── Lane 1: This Week (Events) ── */}
+      <section className="mt-6">
+        <div className="flex items-center justify-between px-6 mb-3">
+          <h3 className="text-[11px] uppercase tracking-[2px] text-white/25 font-medium">This week</h3>
+          <Link href="/community" className="text-[11px] text-white/15 hover:text-kente-gold transition-colors">View all</Link>
+        </div>
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-6 pb-2">
+          {events?.map((evt, i) => (
+            <motion.div
+              key={evt._id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + i * 0.08 }}
             >
-              <Icon size={14} strokeWidth={1.5} />
-              {label}
-              <ArrowRight size={11} className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 -ml-1" />
-            </Link>
+              <Link href="/community" className="group block">
+                <div className="shrink-0 w-[260px] bg-surface border border-white/[0.04] rounded-xl p-4 hover:border-white/[0.08] transition-colors">
+                  <p className="text-[10px] uppercase tracking-wider text-ashanti-red/50 font-medium mb-2">{evt.category}</p>
+                  <h4 className="font-display text-[14px] font-semibold text-white/85 leading-snug group-hover:text-white transition-colors">{evt.title}</h4>
+                  <p className="text-[12px] text-white/25 mt-1.5">
+                    {new Date(evt.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} · {evt.location.split(",")[0]}
+                  </p>
+                </div>
+              </Link>
+            </motion.div>
           ))}
-        </motion.div>
-
-        <KenteStrip className="rounded-full mb-6" />
-
-        {/* ── 3. Section header with scale count ── */}
-        <div className="flex items-baseline justify-between mb-5">
-          <h2 className="text-[11px] uppercase tracking-[2px] text-white/25 font-medium">
-            Happening now
-          </h2>
-          <span className="text-[11px] text-white/10">
-            2,400+ businesses · 850+ roles · 5 events
-          </span>
         </div>
+      </section>
 
-        {/* ── 5. Unified mixed stream ── */}
-        <div>
-          {stream.map((item, i) => {
-            // Insert a subtle Kente line when content type changes
-            const prevKind = i > 0 ? stream[i - 1].kind : null;
-            const showTransition = prevKind !== null && prevKind !== item.kind;
+      {/* ── Kente Strip ── */}
+      <div className="mx-6 mt-4 kente-strip h-[2px] rounded-full" />
 
-            return (
-              <div key={`${item.kind}-${item.id}`}>
-                {showTransition && (
-                  <div className="kente-strip h-[1px] my-1 opacity-20 rounded-full" />
-                )}
-                <StreamRow item={item} index={i} />
+      {/* ── Lane 2: New on Platform (Businesses) ── */}
+      <section className="mt-6">
+        <div className="flex items-center justify-between px-6 mb-3">
+          <h3 className="text-[11px] uppercase tracking-[2px] text-white/25 font-medium">New on platform</h3>
+          <Link href="/directory" className="text-[11px] text-white/15 hover:text-kente-gold transition-colors">View all</Link>
+        </div>
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-6 pb-2">
+          {allBusinesses?.slice(0, 8).map((biz, i) => (
+            <motion.div
+              key={biz._id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 + i * 0.05 }}
+            >
+              <Link href={`/directory/${biz._id}`} className="group block">
+                <div className="shrink-0 w-[140px] bg-surface border border-white/[0.04] rounded-xl p-3 hover:border-white/[0.08] transition-colors">
+                  <h4 className="font-display text-[13px] font-semibold text-white/80 leading-snug line-clamp-1 group-hover:text-white transition-colors">{biz.name}</h4>
+                  <p className="text-[11px] text-white/25 mt-0.5">{biz.category}</p>
+                  <div className="flex items-center gap-1 mt-2">
+                    <Star size={10} fill="currentColor" className="text-kente-gold/40" />
+                    <span className="text-[11px] text-white/25">{biz.rating}</span>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Kente Strip ── */}
+      <div className="mx-6 mt-4 kente-strip h-[2px] rounded-full" />
+
+      {/* ── Lane 3: Open Roles ── */}
+      <section className="mt-6 px-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-[11px] uppercase tracking-[2px] text-white/25 font-medium">Open roles</h3>
+          <Link href="/jobs" className="text-[11px] text-white/15 hover:text-kente-gold transition-colors">View all</Link>
+        </div>
+        {allJobs?.slice(0, 4).map((job, i) => (
+          <motion.div
+            key={job._id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 + i * 0.04 }}
+          >
+            <Link href={`/jobs/${job._id}`} className="group block">
+              <div className="py-3 border-b border-white/[0.03] flex items-center justify-between">
+                <div>
+                  <h4 className="text-[14px] font-medium text-white/80 group-hover:text-white transition-colors">{job.title}</h4>
+                  <p className="text-[12px] text-white/25 mt-0.5">{job.company} · <span className="text-kente-gold/35">{job.salary}</span></p>
+                </div>
+                <ChevronRight size={14} className="text-white/[0.06] group-hover:text-white/20 transition-colors" />
               </div>
-            );
-          })}
-        </div>
-
-        {/* Loading */}
-        {!businesses && !jobs && !events && (
-          <div className="flex justify-center py-20">
-            <div className="w-6 h-6 rounded-full border border-white/10 border-t-white/40 animate-spin" />
-          </div>
-        )}
-
-        <div className="h-8" />
-      </div>
+            </Link>
+          </motion.div>
+        ))}
+      </section>
     </div>
-  );
-}
-
-/* ─── Stream Row ─── */
-function StreamRow({ item, index }: { item: StreamItem; index: number }) {
-  const kindLabel = { business: "business", role: "role", event: "event" }[item.kind];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.05 + index * 0.03 }}
-    >
-      <Link href={item.href} className="group block">
-        <div className="py-3.5 border-b border-white/[0.025] flex items-center gap-3">
-          {/* Main content */}
-          <div className="min-w-0 flex-1">
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-[15px] font-medium text-white/85 truncate group-hover:text-white transition-colors duration-200">
-                {item.title}
-              </h3>
-              {item.kind === "business" && "rating" in item && (
-                <span className="flex items-center gap-0.5 text-[11px] text-kente-gold/40 shrink-0">
-                  <Star size={9} fill="currentColor" />
-                  {item.rating}
-                </span>
-              )}
-            </div>
-            <p className="text-[12px] text-white/30 mt-0.5 truncate">{item.detail}</p>
-          </div>
-
-          {/* Right side — type + recency */}
-          <div className="shrink-0 text-right flex flex-col items-end gap-0.5">
-            <span className="text-[10px] text-white/15 uppercase tracking-wider">
-              {kindLabel}
-            </span>
-            <span className="text-[10px] text-white/10">
-              {item.recency}
-            </span>
-          </div>
-
-          <ChevronRight
-            size={14}
-            className="shrink-0 text-white/[0.06] group-hover:text-white/20 transition-colors duration-200"
-          />
-        </div>
-      </Link>
-    </motion.div>
   );
 }
