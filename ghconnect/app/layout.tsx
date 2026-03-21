@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, DM_Sans } from "next/font/google";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+import { FavouritesProvider } from "@/components/FavouritesProvider";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -32,7 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${fraunces.variable} ${dmSans.variable}`}>
       <body className="bg-onyx text-gray-200 font-body min-h-dvh">
         <ConvexClientProvider>
-          {children}
+          <FavouritesProvider>
+            {children}
+          </FavouritesProvider>
         </ConvexClientProvider>
       </body>
     </html>

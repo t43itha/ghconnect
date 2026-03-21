@@ -15,10 +15,11 @@ import {
   Mail,
   Globe,
   Share2,
-  Bookmark,
+  Heart,
 } from "lucide-react";
 import { GradientHero } from "@/components/GradientHero";
 import { KenteStrip } from "@/components/KenteStrip";
+import { useFavourites } from "@/components/FavouritesProvider";
 
 export default function BusinessDetailPage({
   params,
@@ -29,6 +30,7 @@ export default function BusinessDetailPage({
   const business = useQuery(api.businesses.getById, {
     id: id as Id<"businesses">,
   });
+  const { isFavourite, toggle } = useFavourites();
 
   if (!business) {
     return (
@@ -100,9 +102,22 @@ export default function BusinessDetailPage({
             <Share2 size={16} />
             Share
           </button>
-          <button className="flex items-center gap-2 rounded-full bg-gold-mist border border-gold-border px-4 py-2 text-sm text-white/70 hover:text-white transition-colors duration-200">
-            <Bookmark size={16} />
-            Save
+          <button
+            onClick={() => toggle({
+              id: business._id,
+              kind: "business",
+              title: business.name,
+              subtitle: `${business.category} · ${business.location}`,
+              href: `/directory/${business._id}`,
+            })}
+            className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors duration-200 ${
+              isFavourite(business._id)
+                ? "bg-kente-gold/10 border-kente-gold/30 text-kente-gold"
+                : "bg-gold-mist border-gold-border text-white/70 hover:text-white"
+            }`}
+          >
+            <Heart size={16} fill={isFavourite(business._id) ? "currentColor" : "none"} />
+            {isFavourite(business._id) ? "Saved" : "Save"}
           </button>
         </motion.div>
 

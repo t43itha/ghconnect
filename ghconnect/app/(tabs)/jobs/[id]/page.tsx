@@ -13,8 +13,10 @@ import {
   Clock,
   CalendarDays,
   CheckCircle,
+  Heart,
 } from "lucide-react";
 import { KenteStrip } from "@/components/KenteStrip";
+import { useFavourites } from "@/components/FavouritesProvider";
 
 const typeBadgeColors: Record<string, string> = {
   "Full-time": "bg-forest/20 text-forest",
@@ -29,6 +31,7 @@ export default function JobDetailPage({
 }) {
   const { id } = use(params);
   const job = useQuery(api.jobs.getById, { id: id as Id<"jobs"> });
+  const { isFavourite, toggle } = useFavourites();
 
   if (!job) {
     return (
@@ -46,14 +49,32 @@ export default function JobDetailPage({
       className="min-h-dvh"
     >
       <div className="px-5 pt-[env(safe-area-inset-top,12px)] pb-6 space-y-5">
-        {/* Back link */}
-        <Link
-          href="/jobs"
-          className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition-colors duration-200"
-        >
-          <ArrowLeft size={16} />
-          Back
-        </Link>
+        {/* Back + Save */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/jobs"
+            className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition-colors duration-200"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </Link>
+          <button
+            onClick={() => toggle({
+              id: job._id,
+              kind: "job",
+              title: job.title,
+              subtitle: `${job.company} · ${job.salary}`,
+              href: `/jobs/${job._id}`,
+            })}
+            className={`p-2 rounded-full transition-colors duration-200 ${
+              isFavourite(job._id)
+                ? "text-kente-gold"
+                : "text-white/25 hover:text-white/50"
+            }`}
+          >
+            <Heart size={18} fill={isFavourite(job._id) ? "currentColor" : "none"} />
+          </button>
+        </div>
 
         {/* Gradient icon box */}
         <motion.div
