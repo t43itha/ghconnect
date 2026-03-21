@@ -104,19 +104,20 @@ export default function HomePage() {
           <h3 className="text-[11px] uppercase tracking-[2px] text-white/25 font-medium">This week</h3>
           <Link href="/community" className="text-[11px] text-white/15 hover:text-kente-gold transition-colors">View all</Link>
         </div>
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide px-6 pb-2">
+        <div className="flex items-stretch gap-3 overflow-x-auto scrollbar-hide px-6 pb-2">
           {events?.map((evt, i) => (
             <motion.div
               key={evt._id}
+              className="shrink-0 w-[260px]"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + i * 0.08 }}
             >
-              <Link href="/community" className="group block">
-                <div className="shrink-0 w-[260px] bg-surface border border-white/[0.04] rounded-xl p-4 hover:border-white/[0.08] transition-colors">
+              <Link href="/community" className="group block h-full">
+                <div className="h-full bg-surface border border-white/[0.04] rounded-xl p-4 hover:border-white/[0.08] transition-colors flex flex-col">
                   <p className="text-[10px] uppercase tracking-wider text-ashanti-red/50 font-medium mb-2">{evt.category}</p>
                   <h4 className="font-display text-[14px] font-semibold text-white/85 leading-snug group-hover:text-white transition-colors">{evt.title}</h4>
-                  <p className="text-[12px] text-white/25 mt-1.5">
+                  <p className="text-[12px] text-white/25 mt-auto pt-2">
                     {new Date(evt.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} · {evt.location.split(",")[0]}
                   </p>
                 </div>
