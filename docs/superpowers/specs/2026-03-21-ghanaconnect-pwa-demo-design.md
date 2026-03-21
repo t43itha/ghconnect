@@ -68,7 +68,7 @@ A luxury aesthetic rooted in Ghanaian heritage. The Kente weave pattern becomes 
 | Tab | Icon (Lucide) | Route |
 |-----|---------------|-------|
 | Home | `Home` | `/home` |
-| Explore | `Search` | Search/explore overlay or section |
+| Explore | `Search` | Unified search overlay — text input filters across businesses, jobs, and events on screen |
 | Directory | `Store` | `/directory` |
 | Jobs | `Briefcase` | `/jobs` |
 | Profile | `User` | Placeholder / Our Vision |
@@ -164,7 +164,7 @@ A luxury aesthetic rooted in Ghanaian heritage. The Kente weave pattern becomes 
   category: string,        // "Food & Drink", "Legal", "Beauty", etc.
   description: string,
   location: string,        // "Brixton, London", "Tottenham, London", etc.
-  image: string,           // URL or gradient placeholder identifier
+  image: string,           // CSS gradient placeholder identifier (e.g., "gradient-food", "gradient-tech") — rendered as gradient + Lucide category icon, no external URLs
   rating: number,          // 4.0–5.0
   featured: boolean,
   contactPhone: string,
@@ -227,7 +227,7 @@ All data should be realistic — real-sounding Ghanaian business names, authenti
 | Animation | Framer Motion | latest |
 | Icons | Lucide React | latest |
 | Database | Convex | latest |
-| PWA | next-pwa or equivalent for Next 16 | latest |
+| PWA | next-pwa or equivalent for Next 16 (validate install flow early) | latest |
 | Deployment | Vercel + Convex | — |
 
 ## 7. PWA Requirements
