@@ -1,10 +1,9 @@
 import { mutation } from "./_generated/server";
+import { businessesSeed, jobsSeed, eventsSeed, categoriesSeed } from "./seedData";
 
 export const seedAll = mutation({
   args: {},
   handler: async (ctx) => {
-    const { businessesSeed, jobsSeed, eventsSeed, categoriesSeed } =
-      await import("./seedData");
 
     const existingBusinesses = await ctx.db.query("businesses").collect();
     for (const b of existingBusinesses) await ctx.db.delete(b._id);
