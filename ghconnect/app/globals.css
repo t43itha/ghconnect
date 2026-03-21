@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-onyx: #0d0d0d;
+  --color-surface: #111111;
+  --color-kente-gold: #FCD116;
+  --color-ashanti-red: #CE1126;
+  --color-forest: #006B3F;
+  --color-gold-mist: rgba(252, 209, 22, 0.08);
+  --color-gold-border: rgba(252, 209, 22, 0.12);
+  --color-gold-glow: rgba(252, 209, 22, 0.4);
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+html {
+  background: var(--color-onyx);
+  color: #e0e0e0;
+  font-family: var(--font-body);
+}
+
+body {
+  min-height: 100dvh;
+}
+
+/* Kente weave background pattern */
+.kente-bg {
+  background-image:
+    repeating-linear-gradient(90deg, var(--color-ashanti-red) 0px, var(--color-ashanti-red) 4px, transparent 4px, transparent 20px),
+    repeating-linear-gradient(0deg, var(--color-kente-gold) 0px, var(--color-kente-gold) 4px, transparent 4px, transparent 20px),
+    repeating-linear-gradient(90deg, var(--color-forest) 10px, var(--color-forest) 14px, transparent 14px, transparent 20px);
+  opacity: 0.12;
+}
+
+/* Kente strip accent */
+.kente-strip {
+  background: repeating-linear-gradient(90deg,
+    var(--color-ashanti-red) 0px, var(--color-ashanti-red) 30px,
+    var(--color-kente-gold) 30px, var(--color-kente-gold) 60px,
+    var(--color-forest) 60px, var(--color-forest) 90px,
+    var(--color-kente-gold) 90px, var(--color-kente-gold) 120px
+  );
+}
