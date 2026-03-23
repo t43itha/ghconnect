@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Heart, Store, Briefcase, User } from "lucide-react";
+import { Home, Heart, Store, Briefcase, MoreHorizontal } from "lucide-react";
 
 const tabs = [
   { label: "Home", icon: Home, href: "/home" },
   { label: "Favourites", icon: Heart, href: "/favourites" },
   { label: "Directory", icon: Store, href: "/directory" },
   { label: "Jobs", icon: Briefcase, href: "/jobs" },
-  { label: "More", icon: User, href: "/vision" },
+  { label: "More", icon: MoreHorizontal, href: "/more" },
 ] as const;
 
 export function BottomTabBar() {
@@ -30,12 +30,12 @@ export function BottomTabBar() {
                 size={20}
                 strokeWidth={active ? 2 : 1.5}
                 className={`transition-colors duration-300 ${
-                  active ? "text-kente-gold" : "text-white/25"
+                  active ? "text-kente-gold" : "text-white/40"
                 }`}
               />
               <span
                 className={`text-[9px] tracking-wide transition-colors duration-300 ${
-                  active ? "text-kente-gold font-medium" : "text-white/25"
+                  active ? "text-kente-gold font-medium" : "text-white/40"
                 }`}
               >
                 {label}
