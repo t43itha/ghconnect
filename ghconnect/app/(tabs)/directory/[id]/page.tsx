@@ -20,6 +20,9 @@ import {
 import { GradientHero } from "@/components/GradientHero";
 import { KenteStrip } from "@/components/KenteStrip";
 import { useFavourites } from "@/components/FavouritesProvider";
+import PrimaryButton from "@/components/PrimaryButton";
+import SecondaryButton from "@/components/SecondaryButton";
+import CategoryBadge from "@/components/CategoryBadge";
 
 export default function BusinessDetailPage({
   params,
@@ -70,7 +73,7 @@ export default function BusinessDetailPage({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.1 }}
-          className="font-display text-2xl font-bold text-white"
+          className="font-display text-[28px] text-kente-gold"
         >
           {business.name}
         </motion.h1>
@@ -82,9 +85,7 @@ export default function BusinessDetailPage({
           transition={{ duration: 0.3, delay: 0.15 }}
           className="flex items-center gap-3"
         >
-          <span className="rounded-full bg-forest/20 px-3 py-1 text-xs font-medium text-forest">
-            {business.category}
-          </span>
+          <CategoryBadge label={business.category} />
           <span className="flex items-center gap-1 text-kente-gold text-sm font-medium">
             <Star size={14} fill="currentColor" />
             {business.rating}
@@ -98,27 +99,33 @@ export default function BusinessDetailPage({
           transition={{ duration: 0.3, delay: 0.2 }}
           className="flex gap-3"
         >
-          <button className="flex items-center gap-2 rounded-full bg-gold-mist border border-gold-border px-4 py-2 text-sm text-white/70 hover:text-white transition-colors duration-200">
-            <Share2 size={16} />
+          <SecondaryButton>
+            <Share2 size={16} className="mr-2" />
             Share
-          </button>
-          <button
-            onClick={() => toggle({
-              id: business._id,
-              kind: "business",
-              title: business.name,
-              subtitle: `${business.category} · ${business.location}`,
-              href: `/directory/${business._id}`,
-            })}
-            className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors duration-200 ${
+          </SecondaryButton>
+          <SecondaryButton
+            onClick={() =>
+              toggle({
+                id: business._id,
+                kind: "business",
+                title: business.name,
+                subtitle: `${business.category} · ${business.location}`,
+                href: `/directory/${business._id}`,
+              })
+            }
+            className={
               isFavourite(business._id)
-                ? "bg-kente-gold/10 border-kente-gold/30 text-kente-gold"
-                : "bg-gold-mist border-gold-border text-white/70 hover:text-white"
-            }`}
+                ? "bg-kente-gold/10 border-kente-gold text-kente-gold"
+                : ""
+            }
           >
-            <Heart size={16} fill={isFavourite(business._id) ? "currentColor" : "none"} />
+            <Heart
+              size={16}
+              fill={isFavourite(business._id) ? "currentColor" : "none"}
+              className="mr-2"
+            />
             {isFavourite(business._id) ? "Saved" : "Save"}
-          </button>
+          </SecondaryButton>
         </motion.div>
 
         {/* Location */}
@@ -149,10 +156,8 @@ export default function BusinessDetailPage({
           transition={{ duration: 0.3, delay: 0.35 }}
           className="space-y-4"
         >
-          <h2 className="font-display text-lg font-semibold text-kente-gold">
-            Contact
-          </h2>
-          <div className="space-y-3">
+          <h2 className="font-display text-xl text-kente-gold">Contact</h2>
+          <div className="rounded-xl border border-gold-border bg-gold-mist p-4 space-y-3">
             {business.contactPhone && (
               <div className="flex items-center gap-3 text-sm text-white/60">
                 <Phone size={16} className="shrink-0 text-kente-gold/60" />
@@ -172,6 +177,15 @@ export default function BusinessDetailPage({
               </div>
             )}
           </div>
+        </motion.div>
+
+        {/* Contact CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.4 }}
+        >
+          <PrimaryButton className="w-full">Contact</PrimaryButton>
         </motion.div>
       </div>
     </motion.div>

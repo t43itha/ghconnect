@@ -10,19 +10,14 @@ import {
   ArrowLeft,
   Briefcase,
   MapPin,
-  Clock,
   CalendarDays,
   CheckCircle,
   Heart,
 } from "lucide-react";
 import { KenteStrip } from "@/components/KenteStrip";
 import { useFavourites } from "@/components/FavouritesProvider";
-
-const typeBadgeColors: Record<string, string> = {
-  "Full-time": "bg-forest/20 text-forest",
-  "Part-time": "bg-kente-gold/20 text-kente-gold",
-  Contract: "bg-ashanti-red/20 text-ashanti-red",
-};
+import PrimaryButton from "@/components/PrimaryButton";
+import CategoryBadge from "@/components/CategoryBadge";
 
 export default function JobDetailPage({
   params,
@@ -59,20 +54,25 @@ export default function JobDetailPage({
             Back
           </Link>
           <button
-            onClick={() => toggle({
-              id: job._id,
-              kind: "job",
-              title: job.title,
-              subtitle: `${job.company} · ${job.salary}`,
-              href: `/jobs/${job._id}`,
-            })}
+            onClick={() =>
+              toggle({
+                id: job._id,
+                kind: "job",
+                title: job.title,
+                subtitle: `${job.company} · ${job.salary}`,
+                href: `/jobs/${job._id}`,
+              })
+            }
             className={`p-2 rounded-full transition-colors duration-200 ${
               isFavourite(job._id)
                 ? "text-kente-gold"
                 : "text-white/25 hover:text-white/50"
             }`}
           >
-            <Heart size={18} fill={isFavourite(job._id) ? "currentColor" : "none"} />
+            <Heart
+              size={18}
+              fill={isFavourite(job._id) ? "currentColor" : "none"}
+            />
           </button>
         </div>
 
@@ -92,7 +92,7 @@ export default function JobDetailPage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.1 }}
         >
-          <h1 className="font-display text-2xl font-bold text-white">
+          <h1 className="font-display text-[28px] text-kente-gold">
             {job.title}
           </h1>
           <p className="text-sm text-kente-gold/70 mt-1">{job.company}</p>
@@ -109,11 +109,7 @@ export default function JobDetailPage({
             <MapPin size={13} className="text-white/30" />
             {job.location}
           </span>
-          <span
-            className={`rounded-full px-2.5 py-0.5 font-medium ${typeBadgeColors[job.type] ?? "bg-gold-mist text-white/60"}`}
-          >
-            {job.type}
-          </span>
+          <CategoryBadge label={job.type} />
           <span className="flex items-center gap-1.5">
             <CalendarDays size={13} className="text-white/30" />
             {job.postedDate}
@@ -140,7 +136,7 @@ export default function JobDetailPage({
           transition={{ duration: 0.3, delay: 0.25 }}
           className="space-y-2"
         >
-          <h2 className="font-display text-lg font-semibold text-kente-gold">
+          <h2 className="font-display text-xl text-kente-gold">
             About the Role
           </h2>
           <p className="text-sm text-white/60 leading-relaxed">
@@ -156,12 +152,15 @@ export default function JobDetailPage({
             transition={{ duration: 0.3, delay: 0.3 }}
             className="space-y-3"
           >
-            <h2 className="font-display text-lg font-semibold text-kente-gold">
+            <h2 className="font-display text-xl text-kente-gold">
               Requirements
             </h2>
             <ul className="space-y-2.5">
               {job.requirements.map((req, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-sm text-white/60">
+                <li
+                  key={i}
+                  className="flex items-start gap-2.5 text-sm text-white/60"
+                >
                   <CheckCircle
                     size={16}
                     className="shrink-0 text-forest mt-0.5"
@@ -174,16 +173,13 @@ export default function JobDetailPage({
         )}
 
         {/* Apply CTA */}
-        <motion.button
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.35 }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full rounded-full bg-kente-gold text-onyx font-semibold py-3.5 text-base shadow-[0_4px_20px_rgba(252,209,22,0.3)] cursor-pointer transition-shadow duration-200 hover:shadow-[0_6px_28px_rgba(252,209,22,0.4)]"
         >
-          Apply Now
-        </motion.button>
+          <PrimaryButton className="w-full">Apply Now</PrimaryButton>
+        </motion.div>
       </div>
     </motion.div>
   );
