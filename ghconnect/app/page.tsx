@@ -19,11 +19,13 @@ export default function SplashPage() {
 
   return (
     <div className="relative flex flex-col min-h-dvh bg-onyx overflow-hidden">
-      {/* Top Kente strip */}
-      <KenteStrip />
+      {/* Digital kente corner accents */}
+      <div className="kente-corner absolute top-0 left-0 w-28 h-28 sm:w-36 sm:h-36" />
+      <div className="kente-corner absolute top-0 right-0 w-28 h-28 sm:w-36 sm:h-36" />
+      <div className="kente-corner absolute bottom-0 left-0 w-20 h-20 sm:w-28 sm:h-28 opacity-40" />
 
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 md:px-12 max-w-md mx-auto w-full gap-10">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-8 md:px-12 max-w-md mx-auto w-full gap-8">
         {/* Wordmark — fades in first */}
         <motion.h1
           className="font-display text-[2.8rem] md:text-5xl font-bold leading-[0.95] tracking-tight text-center"
@@ -35,6 +37,9 @@ export default function SplashPage() {
           <span className="text-kente-gold">Ghana</span>
           <span className="text-white">Connect</span>
         </motion.h1>
+
+        {/* Kente chevron divider below wordmark */}
+        <div className="kente-chevrons w-40 mx-auto" />
 
         {/* Streaming text — plays after wordmark */}
         <AnimatePresence>
@@ -58,13 +63,13 @@ export default function SplashPage() {
         <AnimatePresence>
           {showButtons && (
             <motion.div
-              className="flex flex-col sm:flex-row gap-3 w-full sm:justify-center"
+              className="flex flex-col gap-3 w-full max-w-xs mx-auto"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <PrimaryButton href="/home">Get Started</PrimaryButton>
-              <SecondaryButton href="/home">Sign In</SecondaryButton>
+              <PrimaryButton href="/home" className="w-full justify-center">Get Started</PrimaryButton>
+              <SecondaryButton href="/home" className="w-full justify-center">Sign In</SecondaryButton>
             </motion.div>
           )}
         </AnimatePresence>
