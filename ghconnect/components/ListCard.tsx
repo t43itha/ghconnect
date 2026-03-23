@@ -36,7 +36,7 @@ export default function ListCard({
         {thumbnail && <div className="shrink-0">{thumbnail}</div>}
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-white truncate">{title}</p>
+          <p className="text-base font-bold text-white truncate">{title}</p>
           {subtitle && (
             <p className="text-sm text-white/60 truncate mt-0.5">{subtitle}</p>
           )}
