@@ -13,11 +13,15 @@ import { ThemedSearch } from "@/components/ThemedSearch";
 export default function HomePage() {
   const router = useRouter();
   const [gr, setGr] = useState("");
+  const user = useQuery(api.users.viewer);
 
   useEffect(() => {
     const h = new Date().getHours();
     setGr(h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening");
   }, []);
+
+  const firstName = user?.name?.split(" ")[0];
+  const greeting = firstName ? `${gr}, ${firstName}` : gr;
 
   const businesses = useQuery(api.businesses.list);
   const events = useQuery(api.events.list);
@@ -68,7 +72,7 @@ export default function HomePage() {
       <Reveal delay={80}>
         <div style={{ paddingTop: 56, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <p style={{ fontFamily: F.sans, fontSize: 13, color: T.tertiary, margin: 0, letterSpacing: 0.5, fontWeight: 500 }}>{gr}</p>
+            <p style={{ fontFamily: F.sans, fontSize: 13, color: T.tertiary, margin: 0, letterSpacing: 0.5, fontWeight: 500 }}>{greeting}</p>
             <h1 style={{ fontFamily: F.serif, fontSize: 38, fontWeight: 700, margin: "2px 0 0", color: T.ink, letterSpacing: -1, lineHeight: 1.05 }}>
               Ghana<span style={{ color: T.green }}>Connect</span>
             </h1>
