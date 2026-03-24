@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@auth/core": "^0.37.0",
+    "@convex-dev/auth": "^0.0.91",
     "@serwist/next": "^9.5.7",
     "@serwist/precaching": "^9.5.7",
     "@serwist/sw": "^9.5.7",
