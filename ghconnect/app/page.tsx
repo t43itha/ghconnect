@@ -70,9 +70,12 @@ export default function SplashPage() {
   }, []);
 
   useEffect(() => {
-    setVis(false);
-    const t = setTimeout(() => setVis(true), 80);
-    return () => clearTimeout(t);
+    const hide = setTimeout(() => setVis(false), 0);
+    const show = setTimeout(() => setVis(true), 80);
+    return () => {
+      clearTimeout(hide);
+      clearTimeout(show);
+    };
   }, [step]);
 
   const slides = [

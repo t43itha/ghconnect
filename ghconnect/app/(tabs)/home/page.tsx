@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -10,18 +10,36 @@ import { Reveal } from "@/components/Reveal";
 import { Mono } from "@/components/Mono";
 import { ThemedSearch } from "@/components/ThemedSearch";
 
+function getGreetingForHour(hour: number) {
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function getPreferredFirstName(
+  name?: string | null,
+  email?: string | null,
+) {
+  const fallback = email
+    ?.split("@")[0]
+    ?.replace(/[._-]+/g, " ")
+    .trim();
+  const source = (name ?? fallback)?.trim();
+  if (!source) return null;
+
+  const first = source.split(/\s+/)[0];
+  if (!first) return null;
+
+  return first.charAt(0).toUpperCase() + first.slice(1);
+}
+
 export default function HomePage() {
   const router = useRouter();
-  const [gr, setGr] = useState("");
+  const gr = getGreetingForHour(new Date().getHours());
   const user = useQuery(api.users.viewer);
 
-  useEffect(() => {
-    const h = new Date().getHours();
-    setGr(h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening");
-  }, []);
-
-  const firstName = user?.name?.split(" ")[0];
-  const greeting = firstName ? `${gr}, ${firstName}` : gr;
+  const firstName = getPreferredFirstName(user?.name, user?.email);
+  const greeting = firstName ? `${gr} "${firstName}"` : gr;
 
   const businesses = useQuery(api.businesses.list);
   const events = useQuery(api.events.list);
