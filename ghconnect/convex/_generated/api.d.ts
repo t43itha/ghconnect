@@ -8,12 +8,15 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
 import type * as businesses from "../businesses.js";
 import type * as categories from "../categories.js";
 import type * as events from "../events.js";
+import type * as http from "../http.js";
 import type * as jobs from "../jobs.js";
 import type * as seed from "../seed.js";
 import type * as seedData from "../seedData.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -22,12 +25,15 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   businesses: typeof businesses;
   categories: typeof categories;
   events: typeof events;
+  http: typeof http;
   jobs: typeof jobs;
   seed: typeof seed;
   seedData: typeof seedData;
+  users: typeof users;
 }>;
 
 /**
