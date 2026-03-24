@@ -4,10 +4,24 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const viewer = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (userId === null) {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
       return null;
     }
-    return await ctx.db.get(userId);
+
+    const userId = await getAuthUserId(ctx);
+    const user = userId === null ? null : await ctx.db.get(userId);
+
+    return {
+      ...user,
+      name:
+        user?.name ??
+        identity.name ??
+        identity.nickname ??
+        identity.preferredUsername ??
+        undefined,
+      email: user?.email ?? identity.email ?? undefined,
+      tokenIdentifier: identity.tokenIdentifier,
+    };
   },
 });
