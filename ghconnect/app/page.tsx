@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { T, F } from "@/lib/theme";
 import { KenteBorder } from "@/components/KenteBorder";
 
@@ -59,6 +60,7 @@ const keyframeStyles = `
 
 export default function SplashPage() {
   const router = useRouter();
+  const { signIn } = useAuthActions();
   const [step, setStep] = useState(0); // 0-2 = onboarding, 3 = sign in, 4 = exit
   const [vis, setVis] = useState(false);
 
@@ -182,11 +184,11 @@ export default function SplashPage() {
                 onMouseEnter={e => e.currentTarget.style.transform = "translateY(-1px)"} onMouseLeave={e => e.currentTarget.style.transform = ""}>
                 Get Started <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </button>
-              <button onClick={handleEnter} style={{ ...fade(0.34), width: "100%", padding: "16px 24px", borderRadius: 16, background: T.white, border: `1.5px solid ${T.border}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontFamily: F.sans, fontSize: 15, fontWeight: 600, color: T.ink, boxShadow: T.s1, transition: "transform 0.2s" }}
+              <button onClick={() => void signIn("google", { redirectTo: "/home" })} style={{ ...fade(0.34), width: "100%", padding: "16px 24px", borderRadius: 16, background: T.white, border: `1.5px solid ${T.border}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontFamily: F.sans, fontSize: 15, fontWeight: 600, color: T.ink, boxShadow: T.s1, transition: "transform 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.transform = "translateY(-1px)"} onMouseLeave={e => e.currentTarget.style.transform = ""}>
                 <GoogleLogo /> Sign in with Google
               </button>
-              <button onClick={handleEnter} style={{ ...fade(0.4), background: "none", border: "none", cursor: "pointer", fontFamily: F.sans, fontSize: 14, fontWeight: 600, color: T.green, padding: "10px", textAlign: "center", width: "100%" }}>
+              <button onClick={() => void signIn("google", { redirectTo: "/home" })} style={{ ...fade(0.4), background: "none", border: "none", cursor: "pointer", fontFamily: F.sans, fontSize: 14, fontWeight: 600, color: T.green, padding: "10px", textAlign: "center", width: "100%" }}>
                 Already have an account? Sign In
               </button>
             </div>
