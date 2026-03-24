@@ -1,102 +1,194 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Store } from "lucide-react";
-import PageHeader from "@/components/PageHeader";
-import SearchBar from "@/components/SearchBar";
-import { CategoryPill } from "@/components/CategoryPill";
-import ListCard from "@/components/ListCard";
-import CategoryBadge from "@/components/CategoryBadge";
-import { GradientHero } from "@/components/GradientHero";
+import { T, F, SECTION } from "@/lib/theme";
+import { Icon } from "@/components/Icon";
+import { Reveal } from "@/components/Reveal";
+import { Mono } from "@/components/Mono";
+import { ThemedPill } from "@/components/ThemedPill";
+import { ThemedSearch } from "@/components/ThemedSearch";
+import Link from "next/link";
+
+const categories = ["All", "Restaurant", "Legal", "Fashion", "Transport", "Finance", "Health"];
 
 export default function DirectoryPage() {
   const businesses = useQuery(api.businesses.list);
-  const categories = useQuery(api.categories.byType, { type: "business" });
+  const [cat, setCat] = useState("All");
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
+  const filtered =
+    businesses === undefined
+      ? undefined
+      : cat === "All"
+        ? businesses
+        : businesses.filter((b) => b.category === cat);
 
-  const filtered = useMemo(() => {
-    if (!businesses) return [];
-    return businesses.filter((b) => {
-      const q = searchQuery.toLowerCase();
-      const matchesSearch =
-        !searchQuery ||
-        b.name.toLowerCase().includes(q) ||
-        b.category.toLowerCase().includes(q) ||
-        b.location.toLowerCase().includes(q);
-      const matchesCategory =
-        activeCategory === "All" || b.category === activeCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [businesses, searchQuery, activeCategory]);
+  const hv = (e: React.MouseEvent<HTMLElement>, on: boolean) => {
+    e.currentTarget.style.transform = on ? "translateY(-2px)" : "";
+    e.currentTarget.style.boxShadow = on ? T.s3 : "";
+  };
 
   return (
-    <div className="min-h-dvh">
-      <PageHeader title="Business Directory" />
+    <div style={{ padding: "0 24px 120px" }}>
+      <Reveal>
+        <div style={{ paddingTop: 56 }}>
+          <h1
+            style={{
+              fontFamily: F.serif,
+              fontSize: 38,
+              fontWeight: 700,
+              margin: 0,
+              color: T.ink,
+              letterSpacing: -1,
+            }}
+          >
+            Directory
+          </h1>
+          <p
+            style={{
+              fontFamily: F.sans,
+              fontSize: 14,
+              color: T.secondary,
+              margin: "4px 0 0",
+            }}
+          >
+            Trusted Ghanaian businesses across the UK
+          </p>
+        </div>
+      </Reveal>
 
-      <div className="mt-4">
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Search businesses..."
-        />
-      </div>
+      <Reveal delay={80}>
+        <div style={{ marginTop: 20 }}>
+          <ThemedSearch placeholder="Search businesses..." color={SECTION.directory.color} />
+        </div>
+      </Reveal>
 
-      {/* Category pill row */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-3">
-        <CategoryPill
-          label="All"
-          active={activeCategory === "All"}
-          onClick={() => setActiveCategory("All")}
-        />
-        {categories?.map((cat) => (
-          <CategoryPill
-            key={cat._id}
-            label={cat.name}
-            active={activeCategory === cat.name}
-            onClick={() => setActiveCategory(cat.name)}
-          />
-        ))}
-      </div>
+      <Reveal delay={140}>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            overflowX: "auto",
+            marginTop: 16,
+            paddingBottom: 4,
+            scrollbarWidth: "none",
+          }}
+        >
+          {categories.map((c) => (
+            <ThemedPill
+              key={c}
+              active={cat === c}
+              onClick={() => setCat(c)}
+              color={SECTION.directory.color}
+            >
+              {c}
+            </ThemedPill>
+          ))}
+        </div>
+      </Reveal>
 
-      {/* Business list */}
-      <div className="flex flex-col gap-2 px-4 pb-24">
-        {filtered.map((biz, i) => (
-          <ListCard
-            key={biz._id}
-            href={`/directory/${biz._id}`}
-            index={i}
-            title={biz.name}
-            subtitle={biz.location}
-            badge={<CategoryBadge label={biz.category} />}
-            thumbnail={
-              <div className="w-[72px] h-[72px] rounded-lg overflow-hidden">
-                <GradientHero
-                  image={`gradient-${biz.category.toLowerCase()}`}
-                  icon={<Store size={28} />}
-                  className="w-full h-full"
-                />
+      <div style={{ marginTop: 16 }}>
+        {filtered === undefined && (
+          <p
+            style={{
+              fontFamily: F.sans,
+              fontSize: 14,
+              color: T.secondary,
+              textAlign: "center",
+              padding: "40px 0",
+            }}
+          >
+            Loading...
+          </p>
+        )}
+
+        {filtered !== undefined && filtered.length === 0 && (
+          <p
+            style={{
+              fontFamily: F.sans,
+              fontSize: 14,
+              color: T.secondary,
+              textAlign: "center",
+              padding: "40px 0",
+            }}
+          >
+            No businesses found
+          </p>
+        )}
+
+        {filtered?.map((b, i) => (
+          <Reveal key={b._id} delay={200 + i * 60}>
+            <Link href={`/directory/${b._id}`} style={{ textDecoration: "none" }}>
+              <div
+                onMouseEnter={(e) => hv(e, true)}
+                onMouseLeave={(e) => hv(e, false)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  padding: "16px 14px",
+                  background: T.surface,
+                  borderRadius: T.rs,
+                  marginBottom: 10,
+                  border: `1px solid ${T.border}`,
+                  cursor: "pointer",
+                  transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+                }}
+              >
+                <Mono size={48} color={SECTION.directory.color} darkColor={SECTION.directory.dark}>
+                  {b.name[0]}
+                </Mono>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h4
+                    style={{
+                      fontFamily: F.sans,
+                      fontSize: 16,
+                      fontWeight: 700,
+                      margin: 0,
+                      color: T.ink,
+                    }}
+                  >
+                    {b.name}
+                  </h4>
+                  <p
+                    style={{
+                      fontFamily: F.sans,
+                      fontSize: 13,
+                      color: T.secondary,
+                      margin: "2px 0 0",
+                    }}
+                  >
+                    {b.description}
+                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 5 }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                      <Icon name="star" size={11} color={T.gold} />
+                      <span
+                        style={{
+                          fontFamily: F.sans,
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: T.ink,
+                        }}
+                      >
+                        {b.rating}
+                      </span>
+                    </span>
+                    <span style={{ color: T.faint }}>&middot;</span>
+                    <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                      <Icon name="pin" size={11} color={T.tertiary} />
+                      <span style={{ fontFamily: F.sans, fontSize: 12, color: T.tertiary }}>
+                        {b.location}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <Icon name="arrow" size={15} color={T.faint} />
               </div>
-            }
-          />
+            </Link>
+          </Reveal>
         ))}
-
-        {/* Empty state */}
-        {businesses && filtered.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-white/20 text-[14px]">No businesses found</p>
-          </div>
-        )}
-
-        {/* Loading state */}
-        {!businesses && (
-          <div className="flex justify-center py-20">
-            <div className="w-6 h-6 rounded-full border border-white/10 border-t-white/40 animate-spin" />
-          </div>
-        )}
       </div>
     </div>
   );
