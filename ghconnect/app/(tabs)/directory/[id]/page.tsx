@@ -15,11 +15,9 @@ import {
   Mail,
   Globe,
   Share2,
-  Heart,
 } from "lucide-react";
 import { GradientHero } from "@/components/GradientHero";
 import { KenteStrip } from "@/components/KenteStrip";
-import { useFavourites } from "@/components/FavouritesProvider";
 import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
 import CategoryBadge from "@/components/CategoryBadge";
@@ -33,8 +31,6 @@ export default function BusinessDetailPage({
   const business = useQuery(api.businesses.getById, {
     id: id as Id<"businesses">,
   });
-  const { isFavourite, toggle } = useFavourites();
-
   if (!business) {
     return (
       <div className="min-h-dvh flex items-center justify-center">
@@ -102,29 +98,6 @@ export default function BusinessDetailPage({
           <SecondaryButton>
             <Share2 size={16} className="mr-2" />
             Share
-          </SecondaryButton>
-          <SecondaryButton
-            onClick={() =>
-              toggle({
-                id: business._id,
-                kind: "business",
-                title: business.name,
-                subtitle: `${business.category} · ${business.location}`,
-                href: `/directory/${business._id}`,
-              })
-            }
-            className={
-              isFavourite(business._id)
-                ? "bg-kente-gold/10 border-kente-gold text-kente-gold"
-                : ""
-            }
-          >
-            <Heart
-              size={16}
-              fill={isFavourite(business._id) ? "currentColor" : "none"}
-              className="mr-2"
-            />
-            {isFavourite(business._id) ? "Saved" : "Save"}
           </SecondaryButton>
         </motion.div>
 

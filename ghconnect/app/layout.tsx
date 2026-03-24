@@ -1,16 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, DM_Sans } from "next/font/google";
+import { Cormorant, Outfit } from "next/font/google";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
-import { FavouritesProvider } from "@/components/FavouritesProvider";
 import "./globals.css";
 
-const fraunces = Fraunces({
+const cormorant = Cormorant({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0d0d0d",
+  themeColor: "#006B3F",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -30,12 +29,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${dmSans.variable}`}>
-      <body className="bg-onyx text-gray-200 font-body min-h-dvh">
+    <html lang="en" className={`${cormorant.variable} ${outfit.variable}`}>
+      <body className="font-body">
         <ConvexClientProvider>
-          <FavouritesProvider>
-            {children}
-          </FavouritesProvider>
+          {children}
         </ConvexClientProvider>
       </body>
     </html>

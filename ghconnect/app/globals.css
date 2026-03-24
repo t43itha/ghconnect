@@ -1,98 +1,66 @@
 @import "tailwindcss";
 
 @theme {
-  --color-onyx: #0d0d0d;
-  --color-surface: #111111;
-  --color-kente-gold: #FCD116;
-  --color-ashanti-red: #CE1126;
-  --color-forest: #006B3F;
-  --color-gold-mist: rgba(252, 209, 22, 0.08);
-  --color-gold-border: rgba(252, 209, 22, 0.2);
-  --color-gold-glow: rgba(252, 209, 22, 0.4);
+  --color-bg: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-surfaceAlt: #F5F5F5;
+  --color-border: #EBEBEB;
+  --color-borderLight: #F2F2F2;
+  --color-ink: #111111;
+  --color-inkLight: #1A1A1A;
+  --color-secondary: #6B6B6B;
+  --color-tertiary: #9E9E9E;
+  --color-faint: #C8C8C8;
+  --color-green: #006B3F;
+  --color-greenDark: #005432;
+  --color-greenSoft: rgba(0,107,63,0.07);
+  --color-red: #CE1126;
+  --color-gold: #D4A017;
+  --color-goldSoft: rgba(212,160,23,0.08);
 
-  --font-display: 'Fraunces', serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Cormorant', serif;
+  --font-body: 'Outfit', sans-serif;
 }
 
 html {
-  background: var(--color-onyx);
-  color: #e0e0e0;
+  background: #F5F5F5;
+  color: #111111;
   font-family: var(--font-body);
 }
 
 body {
   min-height: 100dvh;
+  background: #F5F5F5;
 }
 
-/* Kente weave background pattern */
-.kente-bg {
-  background-image:
-    repeating-linear-gradient(90deg, var(--color-ashanti-red) 0px, var(--color-ashanti-red) 4px, transparent 4px, transparent 20px),
-    repeating-linear-gradient(0deg, var(--color-kente-gold) 0px, var(--color-kente-gold) 4px, transparent 4px, transparent 20px),
-    repeating-linear-gradient(90deg, var(--color-forest) 10px, var(--color-forest) 14px, transparent 14px, transparent 20px);
-  opacity: 0.12;
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Kente strip accent */
-.kente-strip {
-  background: repeating-linear-gradient(90deg,
-    var(--color-ashanti-red) 0px, var(--color-ashanti-red) 30px,
-    var(--color-kente-gold) 30px, var(--color-kente-gold) 60px,
-    var(--color-forest) 60px, var(--color-forest) 90px,
-    var(--color-kente-gold) 90px, var(--color-kente-gold) 120px
-  );
+input::placeholder {
+  color: #9E9E9E !important;
 }
 
-/* Digital kente corner pattern — geometric woven grid */
-.kente-corner {
-  --k-red: var(--color-ashanti-red);
-  --k-gold: var(--color-kente-gold);
-  --k-green: var(--color-forest);
-  background-image:
-    /* Diagonal gold lines */
-    repeating-linear-gradient(
-      45deg,
-      var(--k-gold) 0px, var(--k-gold) 2px,
-      transparent 2px, transparent 10px
-    ),
-    /* Counter-diagonal red lines */
-    repeating-linear-gradient(
-      -45deg,
-      var(--k-red) 0px, var(--k-red) 2px,
-      transparent 2px, transparent 10px
-    ),
-    /* Horizontal green accents */
-    repeating-linear-gradient(
-      0deg,
-      var(--k-green) 0px, var(--k-green) 2px,
-      transparent 2px, transparent 12px
-    ),
-    /* Vertical gold accents */
-    repeating-linear-gradient(
-      90deg,
-      var(--k-gold) 0px, var(--k-gold) 2px,
-      transparent 2px, transparent 12px
-    );
-  opacity: 0.7;
+::-webkit-scrollbar {
+  display: none;
 }
 
-/* Kente chevron divider row */
-.kente-chevrons {
-  height: 12px;
-  background-image:
-    repeating-linear-gradient(
-      60deg,
-      var(--color-ashanti-red) 0px, var(--color-ashanti-red) 2px,
-      transparent 2px, transparent 6px
-    ),
-    repeating-linear-gradient(
-      -60deg,
-      var(--color-forest) 0px, var(--color-forest) 2px,
-      transparent 2px, transparent 6px
-    ),
-    repeating-linear-gradient(
-      60deg,
-      var(--color-kente-gold) 3px, var(--color-kente-gold) 5px,
-      transparent 5px, transparent 9px
-    );
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes nodeIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes lineIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

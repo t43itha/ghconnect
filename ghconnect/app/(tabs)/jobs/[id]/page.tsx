@@ -12,10 +12,8 @@ import {
   MapPin,
   CalendarDays,
   CheckCircle,
-  Heart,
 } from "lucide-react";
 import { KenteStrip } from "@/components/KenteStrip";
-import { useFavourites } from "@/components/FavouritesProvider";
 import PrimaryButton from "@/components/PrimaryButton";
 import CategoryBadge from "@/components/CategoryBadge";
 
@@ -26,8 +24,6 @@ export default function JobDetailPage({
 }) {
   const { id } = use(params);
   const job = useQuery(api.jobs.getById, { id: id as Id<"jobs"> });
-  const { isFavourite, toggle } = useFavourites();
-
   if (!job) {
     return (
       <div className="min-h-dvh flex items-center justify-center">
@@ -53,27 +49,6 @@ export default function JobDetailPage({
             <ArrowLeft size={16} />
             Back
           </Link>
-          <button
-            onClick={() =>
-              toggle({
-                id: job._id,
-                kind: "job",
-                title: job.title,
-                subtitle: `${job.company} · ${job.salary}`,
-                href: `/jobs/${job._id}`,
-              })
-            }
-            className={`p-2 rounded-full transition-colors duration-200 ${
-              isFavourite(job._id)
-                ? "text-kente-gold"
-                : "text-white/25 hover:text-white/50"
-            }`}
-          >
-            <Heart
-              size={18}
-              fill={isFavourite(job._id) ? "currentColor" : "none"}
-            />
-          </button>
         </div>
 
         {/* Gradient icon box */}
