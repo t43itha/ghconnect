@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "convex/values";
+import { Id } from "@/convex/_generated/dataModel";
 import { T, F, SECTION } from "@/lib/theme";
 import { Icon } from "@/components/Icon";
 import { Reveal } from "@/components/Reveal";

@@ -28,10 +28,10 @@ export default function HomePage() {
   };
 
   const tiles = [
-    { label: "Directory", sub: "Find businesses", icon: "grid", tab: "/directory", ...SECTION.directory },
-    { label: "Events", sub: "What's on", icon: "calendar", tab: "/events", ...SECTION.events },
-    { label: "Jobs", sub: "Opportunities", icon: "briefcase", tab: "/jobs", ...SECTION.jobs },
-    { label: "High Commission", sub: "Embassy info", icon: "building", tab: "/highcom", ...SECTION.marketplace },
+    { ...SECTION.directory, label: "Directory", sub: "Find businesses", icon: "grid", tab: "/directory" },
+    { ...SECTION.events, label: "Events", sub: "What's on", icon: "calendar", tab: "/events" },
+    { ...SECTION.jobs, label: "Jobs", sub: "Opportunities", icon: "briefcase", tab: "/jobs" },
+    { ...SECTION.marketplace, label: "High Commission", sub: "Embassy info", icon: "building", tab: "/highcom" },
   ];
 
   return (
