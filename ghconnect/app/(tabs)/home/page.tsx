@@ -39,7 +39,7 @@ export default function HomePage() {
   const user = useQuery(api.users.viewer);
 
   const firstName = getPreferredFirstName(user?.name, user?.email);
-  const greeting = firstName ? `${gr} "${firstName}"` : gr;
+  const greeting = firstName ? `${gr} ${firstName}` : gr;
 
   const businesses = useQuery(api.businesses.list);
   const events = useQuery(api.events.list);
