@@ -7,9 +7,11 @@ import { Icon } from "@/components/Icon";
 interface ThemedSearchProps {
   placeholder?: string;
   color: string;
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-export function ThemedSearch({ placeholder = "Search...", color }: ThemedSearchProps) {
+export function ThemedSearch({ placeholder = "Search...", color, value, onChange }: ThemedSearchProps) {
   const [focused, setFocused] = useState(false);
 
   return (
@@ -29,6 +31,8 @@ export function ThemedSearch({ placeholder = "Search...", color }: ThemedSearchP
       <Icon name="search" size={18} color={focused ? color : T.tertiary} />
       <input
         placeholder={placeholder}
+        value={value}
+        onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         style={{

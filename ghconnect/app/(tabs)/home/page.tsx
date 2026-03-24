@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -21,6 +21,35 @@ export default function HomePage() {
 
   const businesses = useQuery(api.businesses.list);
   const events = useQuery(api.events.list);
+  const [search, setSearch] = useState("");
+
+  const filteredBusinesses = useMemo(() => {
+    if (businesses === undefined) return undefined;
+    if (!search.trim()) return businesses.slice(0, 4);
+    const q = search.toLowerCase();
+    return businesses
+      .filter(
+        (b) =>
+          b.name.toLowerCase().includes(q) ||
+          b.category.toLowerCase().includes(q) ||
+          (b.description ?? "").toLowerCase().includes(q)
+      )
+      .slice(0, 4);
+  }, [businesses, search]);
+
+  const filteredEvents = useMemo(() => {
+    if (events === undefined) return undefined;
+    if (!search.trim()) return events.slice(0, 3);
+    const q = search.toLowerCase();
+    return events
+      .filter(
+        (ev) =>
+          ev.title.toLowerCase().includes(q) ||
+          (ev.description ?? "").toLowerCase().includes(q) ||
+          ev.location.toLowerCase().includes(q)
+      )
+      .slice(0, 3);
+  }, [events, search]);
 
   const hv = (e: React.MouseEvent<HTMLDivElement>, on: boolean) => {
     e.currentTarget.style.transform = on ? "translateY(-2px)" : "";
@@ -28,10 +57,10 @@ export default function HomePage() {
   };
 
   const tiles = [
-    { ...SECTION.directory, label: "Directory", sub: "Find businesses", icon: "grid", tab: "/directory" },
+    { ...SECTION.marketplace, label: "High Commission", sub: "Embassy info", icon: "building", tab: "/highcom" },
     { ...SECTION.events, label: "Events", sub: "What's on", icon: "calendar", tab: "/events" },
     { ...SECTION.jobs, label: "Jobs", sub: "Opportunities", icon: "briefcase", tab: "/jobs" },
-    { ...SECTION.marketplace, label: "High Commission", sub: "Embassy info", icon: "building", tab: "/highcom" },
+    { ...SECTION.directory, label: "Directory", sub: "Find businesses", icon: "grid", tab: "/directory" },
   ];
 
   return (
@@ -52,7 +81,7 @@ export default function HomePage() {
 
       <Reveal delay={160}>
         <div style={{ marginTop: 22 }}>
-          <ThemedSearch placeholder="Search businesses, events, jobs..." color={T.green} />
+          <ThemedSearch placeholder="Search businesses, events, jobs..." color={T.green} value={search} onChange={setSearch} />
         </div>
       </Reveal>
 
@@ -112,10 +141,10 @@ export default function HomePage() {
             <span onClick={() => router.push("/directory")} style={{ fontFamily: F.sans, fontSize: 13, color: SECTION.directory.color, cursor: "pointer", fontWeight: 600 }}>View all</span>
           </div>
           <div style={{ display: "flex", gap: 13, overflowX: "auto", margin: "0 -24px", padding: "0 24px 8px", scrollbarWidth: "none" }}>
-            {businesses === undefined ? (
+            {filteredBusinesses === undefined ? (
               <p style={{ fontFamily: F.sans, fontSize: 14, color: T.tertiary, textAlign: "center", width: "100%" }}>Loading...</p>
             ) : (
-              businesses.slice(0, 4).map(b => (
+              filteredBusinesses.map(b => (
                 <div
                   key={b._id}
                   onMouseEnter={e => hv(e, true)}
@@ -142,10 +171,10 @@ export default function HomePage() {
             <h3 style={{ fontFamily: F.serif, fontSize: 26, fontWeight: 700, margin: 0, color: T.ink, letterSpacing: -0.5 }}>Upcoming</h3>
             <span onClick={() => router.push("/events")} style={{ fontFamily: F.sans, fontSize: 13, color: SECTION.events.color, cursor: "pointer", fontWeight: 600 }}>See all</span>
           </div>
-          {events === undefined ? (
+          {filteredEvents === undefined ? (
             <p style={{ fontFamily: F.sans, fontSize: 14, color: T.tertiary, textAlign: "center" }}>Loading...</p>
           ) : (
-            events.slice(0, 3).map((ev, i) => {
+            filteredEvents.map((ev, i) => {
               const d = new Date(ev.date);
               return (
                 <div key={ev._id} style={{ display: "flex", gap: 14, padding: "16px 0", borderBottom: i < 2 ? `1px solid ${T.borderLight}` : "none", cursor: "pointer" }}>

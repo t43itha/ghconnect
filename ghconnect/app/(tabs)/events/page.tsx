@@ -7,6 +7,7 @@ import { T, F, SECTION } from "@/lib/theme";
 import { Icon } from "@/components/Icon";
 import { Reveal } from "@/components/Reveal";
 import { ThemedPill } from "@/components/ThemedPill";
+import { ThemedSearch } from "@/components/ThemedSearch";
 import Link from "next/link";
 
 const types = ["All", "Cultural", "Business", "Social"];
@@ -14,13 +15,22 @@ const types = ["All", "Cultural", "Business", "Social"];
 export default function EventsPage() {
   const events = useQuery(api.events.list);
   const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState("");
 
   const filtered =
     events === undefined
       ? undefined
-      : filter === "All"
-        ? events
-        : events.filter((e) => e.category === filter);
+      : events.filter((e) => {
+          const matchesType = filter === "All" || e.category === filter;
+          if (!matchesType) return false;
+          if (!search.trim()) return true;
+          const q = search.toLowerCase();
+          return (
+            e.title.toLowerCase().includes(q) ||
+            e.description.toLowerCase().includes(q) ||
+            e.location.toLowerCase().includes(q)
+          );
+        });
 
   const hv = (e: React.MouseEvent<HTMLElement>, on: boolean) => {
     e.currentTarget.style.transform = on ? "translateY(-2px)" : "";
@@ -59,11 +69,22 @@ export default function EventsPage() {
       </Reveal>
 
       <Reveal delay={80}>
+        <div style={{ marginTop: 20 }}>
+          <ThemedSearch
+            placeholder="Search events..."
+            color={S.color}
+            value={search}
+            onChange={setSearch}
+          />
+        </div>
+      </Reveal>
+
+      <Reveal delay={140}>
         <div
           style={{
             display: "flex",
             gap: 8,
-            marginTop: 20,
+            marginTop: 16,
             overflowX: "auto",
             scrollbarWidth: "none",
           }}

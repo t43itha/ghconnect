@@ -16,13 +16,22 @@ const categories = ["All", "Restaurant", "Legal", "Fashion", "Transport", "Finan
 export default function DirectoryPage() {
   const businesses = useQuery(api.businesses.list);
   const [cat, setCat] = useState("All");
+  const [search, setSearch] = useState("");
 
   const filtered =
     businesses === undefined
       ? undefined
-      : cat === "All"
-        ? businesses
-        : businesses.filter((b) => b.category === cat);
+      : businesses.filter((b) => {
+          const matchesCat = cat === "All" || b.category === cat;
+          if (!matchesCat) return false;
+          if (!search.trim()) return true;
+          const q = search.toLowerCase();
+          return (
+            b.name.toLowerCase().includes(q) ||
+            b.category.toLowerCase().includes(q) ||
+            (b.description ?? "").toLowerCase().includes(q)
+          );
+        });
 
   const hv = (e: React.MouseEvent<HTMLElement>, on: boolean) => {
     e.currentTarget.style.transform = on ? "translateY(-2px)" : "";
@@ -60,7 +69,7 @@ export default function DirectoryPage() {
 
       <Reveal delay={80}>
         <div style={{ marginTop: 20 }}>
-          <ThemedSearch placeholder="Search businesses..." color={SECTION.directory.color} />
+          <ThemedSearch placeholder="Search businesses..." color={SECTION.directory.color} value={search} onChange={setSearch} />
         </div>
       </Reveal>
 

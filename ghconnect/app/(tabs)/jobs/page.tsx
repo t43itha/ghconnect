@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { T, F, SECTION } from "@/lib/theme";
@@ -12,6 +13,21 @@ import Link from "next/link";
 export default function JobsPage() {
   const jobs = useQuery(api.jobs.list);
   const S = SECTION.jobs;
+  const [search, setSearch] = useState("");
+
+  const filtered =
+    jobs === undefined
+      ? undefined
+      : !search.trim()
+        ? jobs
+        : jobs.filter((j) => {
+            const q = search.toLowerCase();
+            return (
+              j.title.toLowerCase().includes(q) ||
+              j.company.toLowerCase().includes(q) ||
+              j.location.toLowerCase().includes(q)
+            );
+          });
 
   const hv = (e: React.MouseEvent<HTMLElement>, on: boolean) => {
     e.currentTarget.style.transform = on ? "translateY(-2px)" : "";
@@ -49,12 +65,12 @@ export default function JobsPage() {
 
       <Reveal delay={80}>
         <div style={{ marginTop: 20 }}>
-          <ThemedSearch placeholder="Search roles, companies..." color={S.color} />
+          <ThemedSearch placeholder="Search roles, companies..." color={S.color} value={search} onChange={setSearch} />
         </div>
       </Reveal>
 
       <div style={{ marginTop: 18 }}>
-        {jobs === undefined && (
+        {filtered === undefined && (
           <p
             style={{
               fontFamily: F.sans,
@@ -68,7 +84,7 @@ export default function JobsPage() {
           </p>
         )}
 
-        {jobs !== undefined && jobs.length === 0 && (
+        {filtered !== undefined && filtered.length === 0 && (
           <p
             style={{
               fontFamily: F.sans,
@@ -82,7 +98,7 @@ export default function JobsPage() {
           </p>
         )}
 
-        {jobs?.map((j, i) => (
+        {filtered?.map((j, i) => (
           <Reveal key={j._id} delay={160 + i * 70}>
             <Link href={`/jobs/${j._id}`} style={{ textDecoration: "none" }}>
               <div
